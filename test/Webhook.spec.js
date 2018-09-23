@@ -1,6 +1,6 @@
 'use strict';
 
-var stripe = require('../testUtils').getSpyableStripe();
+var stripe = require('../testUtils').getSpyableClarityboard();
 var expect = require('chai').expect;
 
 var EVENT_PAYLOAD = {

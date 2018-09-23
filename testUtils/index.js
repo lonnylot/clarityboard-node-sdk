@@ -10,40 +10,40 @@ var ResourceNamespace = require('../lib/ResourceNamespace').ResourceNamespace;
 
 var utils = module.exports = {
 
-  getUserStripeKey: function() {
-    var key = process.env.STRIPE_TEST_API_KEY || 'tGN0bIwXnHdwOa85VABjPdSn8nWY7G7I';
+  getUserClarityboardKey: function() {
+    var key = process.env.CLARITYBOARD_TEST_API_KEY || 'tGN0bIwXnHdwOa85VABjPdSn8nWY7G7I';
 
     return key;
   },
 
-  getSpyableStripe: function() {
-    // Provide a testable stripe instance
+  getSpyableClarityboard: function() {
+    // Provide a testable clarityboard instance
     // That is, with mock-requests built in and hookable
 
-    var stripe = require('../lib/stripe');
-    var stripeInstance = stripe('fakeAuthToken');
+    var clarityboard = require('../lib/clarityboard');
+    var clarityboardInstance = clarityboard('fakeAuthToken');
 
-    stripeInstance.REQUESTS = [];
+    clarityboardInstance.REQUESTS = [];
 
-    for (var i in stripeInstance) {
-      makeInstanceSpyable(stripeInstance, stripeInstance[i]);
+    for (var i in clarityboardInstance) {
+      makeInstanceSpyable(clarityboardInstance, clarityboardInstance[i]);
     }
 
-    function makeInstanceSpyable(stripeInstance, thisInstance) {
-      if (thisInstance instanceof stripe.StripeResource) {
-        patchRequest(stripeInstance, thisInstance);
+    function makeInstanceSpyable(clarityboardInstance, thisInstance) {
+      if (thisInstance instanceof clarityboard.ClarityboardResource) {
+        patchRequest(clarityboardInstance, thisInstance);
       } else if (thisInstance instanceof ResourceNamespace) {
         var namespace = thisInstance;
 
         for (var j in namespace) {
-          makeInstanceSpyable(stripeInstance, namespace[j]);
+          makeInstanceSpyable(clarityboardInstance, namespace[j]);
         }
       }
     }
 
-    function patchRequest(stripeInstance, instance) {
+    function patchRequest(clarityboardInstance, instance) {
       instance._request = function(method, host, url, data, auth, options, cb) {
-        var req = stripeInstance.LAST_REQUEST = {
+        var req = clarityboardInstance.LAST_REQUEST = {
           method: method,
           url: url,
           data: data,
@@ -55,12 +55,12 @@ var utils = module.exports = {
         if (host) {
           req.host = host;
         }
-        stripeInstance.REQUESTS.push(req);
+        clarityboardInstance.REQUESTS.push(req);
         cb.call(this, null, {});
       };
     }
 
-    return stripeInstance;
+    return clarityboardInstance;
   },
 
   /**
@@ -74,8 +74,8 @@ var utils = module.exports = {
     function CleanupUtility(timeout) {
       var self = this;
       this._cleanupFns = [];
-      this._stripe = require('../lib/stripe')(
-        utils.getUserStripeKey(),
+      this._clarityboard = require('../lib/clarityboard')(
+        utils.getUserClarityboardKey(),
         'latest'
       );
       afterEach(function(done) {
@@ -115,22 +115,22 @@ var utils = module.exports = {
       },
       deleteCustomer: function(custId) {
         this.add(function() {
-          return this._stripe.customers.del(custId);
+          return this._clarityboard.customers.del(custId);
         });
       },
       deletePlan: function(pId) {
         this.add(function() {
-          return this._stripe.plans.del(pId);
+          return this._clarityboard.plans.del(pId);
         });
       },
       deleteCoupon: function(cId) {
         this.add(function() {
-          return this._stripe.coupons.del(cId);
+          return this._clarityboard.coupons.del(cId);
         });
       },
       deleteInvoiceItem: function(iiId) {
         this.add(function() {
-          return this._stripe.invoiceItems.del(iiId);
+          return this._clarityboard.invoiceItems.del(iiId);
         });
       },
     };

@@ -13,29 +13,27 @@ describe('Error', function() {
     expect(e).to.have.property('stack');
   });
 
-  describe('StripeError', function() {
+  describe('ClarityboardError', function() {
     it('Generates specific instance depending on error-type', function() {
-      expect(Error.StripeError.generate({type: 'card_error'})).to.be.instanceOf(Error.StripeCardError);
-      expect(Error.StripeError.generate({type: 'invalid_request_error'})).to.be.instanceOf(
-        Error.StripeInvalidRequestError
+      expect(Error.ClarityboardError.generate({type: 'invalid_request_error'})).to.be.instanceOf(
+        Error.ClarityboardInvalidRequestError
       );
-      expect(Error.StripeError.generate({type: 'api_error'})).to.be.instanceOf(Error.StripeAPIError);
-      expect(Error.StripeError.generate({type: 'idempotency_error'})).to.be.instanceOf(Error.StripeIdempotencyError);
+      expect(Error.ClarityboardError.generate({type: 'api_error'})).to.be.instanceOf(Error.ClarityboardAPIError);
     });
 
     it('Pulls in headers', function() {
       var headers = {'Request-Id': '123'};
-      var e = Error.StripeError.generate({type: 'card_error', headers: headers});
+      var e = Error.ClarityboardError.generate({type: 'api_error', headers: headers});
       expect(e).to.have.property('headers', headers);
     });
 
     it('Pulls in request IDs', function() {
-      var e = Error.StripeError.generate({type: 'card_error', requestId: 'foo'});
+      var e = Error.ClarityboardError.generate({type: 'api_error', requestId: 'foo'});
       expect(e).to.have.property('requestId', 'foo');
     });
 
     it('Pulls in HTTP status code', function() {
-      var e = Error.StripeError.generate({type: 'card_error', statusCode: 400});
+      var e = Error.ClarityboardError.generate({type: 'api_error', statusCode: 400});
       expect(e).to.have.property('statusCode', 400);
     });
   });

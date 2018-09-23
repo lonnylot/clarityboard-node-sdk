@@ -134,7 +134,7 @@ describe('utils', function() {
         utils.getDataFromArgs(args);
       }, function(message) {
         expect(message).to.equal(
-          'Stripe: Options found in arguments (api_key, idempotency_key).' +
+          'Clarityboard: Options found in arguments (api_key).' +
             ' Did you mean to pass an options object? See https://github.com/stripe/stripe-node/wiki/Passing-Options.'
         );
 
@@ -179,52 +179,6 @@ describe('utils', function() {
       });
       expect(args.length).to.equal(0);
     });
-    it('parses an idempotency key', function() {
-      var args = [{foo: 'bar'}, {idempotency_key: 'foo'}];
-      expect(utils.getOptionsFromArgs(args)).to.deep.equal({
-        auth: null,
-        headers: {'Idempotency-Key': 'foo'},
-      });
-      expect(args.length).to.equal(1);
-    });
-    it('parses an api version', function() {
-      var args = [{foo: 'bar'}, {stripe_version: '2003-03-30'}];
-      expect(utils.getOptionsFromArgs(args)).to.deep.equal({
-        auth: null,
-        headers: {'Stripe-Version': '2003-03-30'},
-      });
-      expect(args.length).to.equal(1);
-    });
-    it('parses an idempotency key and api key and api version (with data)', function() {
-      var args = [{foo: 'bar'}, {
-        api_key: 'sk_test_iiiiiiiiiiiiiiiiiiiiiiii',
-        idempotency_key: 'foo',
-        stripe_version: '2010-01-10',
-      },];
-      expect(utils.getOptionsFromArgs(args)).to.deep.equal({
-        auth: 'sk_test_iiiiiiiiiiiiiiiiiiiiiiii',
-        headers: {
-          'Idempotency-Key': 'foo',
-          'Stripe-Version': '2010-01-10',
-        },
-      });
-      expect(args.length).to.equal(1);
-    });
-    it('parses an idempotency key and api key and api version', function() {
-      var args = [{
-        api_key: 'sk_test_iiiiiiiiiiiiiiiiiiiiiiii',
-        idempotency_key: 'foo',
-        stripe_version: 'hunter2',
-      },];
-      expect(utils.getOptionsFromArgs(args)).to.deep.equal({
-        auth: 'sk_test_iiiiiiiiiiiiiiiiiiiiiiii',
-        headers: {
-          'Idempotency-Key': 'foo',
-          'Stripe-Version': 'hunter2',
-        },
-      });
-      expect(args.length).to.equal(0);
-    });
     it('warns if the hash contains something that does not belong', function(done) {
       var args = [{foo: 'bar'}, {
         api_key: 'sk_test_iiiiiiiiiiiiiiiiiiiiiiii',
@@ -238,7 +192,7 @@ describe('utils', function() {
         utils.getOptionsFromArgs(args);
       }, function(message) {
         expect(message).to.equal(
-          'Stripe: Invalid options found (fishsticks, custard); ignoring.'
+          'Clarityboard: Invalid options found (idempotency_key, stripe_version, fishsticks, custard); ignoring.'
         );
 
         done();
