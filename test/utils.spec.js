@@ -51,7 +51,7 @@ describe('utils', function() {
           {b: 'c'},
           {b: 'd'},
         ],
-      }))).to.equal('a[][b]=c&a[][b]=d');
+      }))).to.equal('a[0][b]=c&a[1][b]=d');
     })
 
     it('Handles indexed arrays', function() {
@@ -85,7 +85,7 @@ describe('utils', function() {
       it('Handles the `expand` array correctly (producing the form `expand[]=_` for each item', function() {
         expect(decodeURI(utils.stringifyRequestData({
           expand: ['a', 'foo', 'a.b.c'],
-        }))).to.equal('expand[]=a&expand[]=foo&expand[]=a.b.c');
+        }))).to.equal('expand[0]=a&expand[1]=foo&expand[2]=a.b.c');
       });
     });
   });
